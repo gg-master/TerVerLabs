@@ -1,5 +1,5 @@
 import unittest
-from main import CombinationWithoutRep, PlacementWithRep, Permutation, CombinationWithRep
+from task1 import CombinationWithoutRep, PlacementWithRep, Permutation, CombinationWithRep
 
 
 class CombinationsWithoutRepTestCase(unittest.TestCase):
