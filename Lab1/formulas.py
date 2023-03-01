@@ -1,10 +1,10 @@
+from abc import ABC
 from math import factorial as m_factorial
-from typing import Union, Optional
-from dataclasses import dataclass
+from typing import Union, List
+from functools import reduce
 from sympy import symbols, pretty
 from sympy import factorial as sp_factorial
 from sympy.core.expr import Expr
-from functools import reduce
 
 
 MIN_VAL = 0
@@ -13,86 +13,75 @@ MAX_VAL = 100
 SP_N, SP_K, SP_M = symbols("n k m")
 
 
-@dataclass
-class Formula:
+class Formula(ABC):
     name: str
     notation: str
     sympy_f: Expr
     result: Union[int, float]
 
-
-def global_args_validator(func):
-    """
-    checking that all arguments are int and in the range [0, 100]
-    """
-
-    def wrapper(*args):
+    def __init__(self, *args):
         if not all(
             [MIN_VAL <= val <= MAX_VAL for val in args if isinstance(val, int)]
         ):
             raise ValueError(
                 "Один из аргументов указан в неправильном диапазоне!"
             )
-        return func(*args)
-
-    return wrapper
 
 
-@global_args_validator
-def combinations_without_rep(k: int, n: int) -> Formula:
-    # сhecking the condition for a specific formula
-    if n < k:
-        raise ValueError("Число n должно быть больше числа k!")
-
-    result = m_factorial(n) // (m_factorial(n - k) * m_factorial(k))
-    return Formula(
-        "Сочетание без повторений",
-        "C(n; k) = ",
-        sp_factorial(SP_N) / (sp_factorial(SP_N - SP_K) * sp_factorial(SP_K)),
-        result,
+class CombinationsWithoutRep(Formula):
+    name = "Сочетание без повторений"
+    notation = "C(n; k) = "
+    sympy_f = sp_factorial(SP_N) / (
+        sp_factorial(SP_N - SP_K) * sp_factorial(SP_K)
     )
 
+    def __init__(self, k: int, n: int):
+        super().__init__(k, n)
+        # сhecking the condition for a specific formula
+        if n < k:
+            raise ValueError("Число n должно быть больше числа k!")
 
-@global_args_validator
-def combinations_with_rep(k: int, n: int) -> Formula:
-    f_result: Formula = combinations_without_rep(k, n + k - 1)
-    return Formula(
-        "Сочетание с повторениями",
-        "C~(n; k) = C(n + k - 1; k) = ",
-        f_result.sympy_f,
-        f_result.result,
-    )
+        self.result = m_factorial(n) // (m_factorial(n - k) * m_factorial(k))
 
 
-@global_args_validator
-def placement_with_rep(k: int, n: int) -> Formula:
-    return Formula(
-        "Размещение с повторениями",
-        "A~(n; k) = ",
-        SP_N**SP_K,
-        result=n**k,
-    )
+class CombinationsWithRep(CombinationsWithoutRep):
+    name = "Сочетание с повторениями"
+    notation = "C~(n; k) = C(n + k - 1; k) = "
+
+    def __init__(self, k: int, n: int):
+        super().__init__(k, n + k - 1)
 
 
-@global_args_validator
-def permutation_without_rep(n: int) -> Formula:
-    return Formula(
-        "Перестановка",
-        "P(n) = ",
-        sp_factorial(SP_N),
-        result=m_factorial(n),
-    )
+class PlacementWithRep(Formula):
+    name = "Размещение с повторениями"
+    notation = "A~(n; k) = "
+    sympy_f = SP_N**SP_K
+
+    def __init__(self, k: int, n: int):
+        super().__init__(k, n)
+        self.result = n**k
 
 
-@global_args_validator
-def permutation_with_rep(*k) -> Formula:
-    result = m_factorial(sum(k)) // reduce(lambda x, y: x * y, map(m_factorial, k))
-    return Formula(
-        "Перестановка c повторениями",
-        "Pm(k1, k2, ..., kn) = ",
-        Expr(),
-        result,
-    )
+class PermutationWithoutRep(Formula):
+    name = "Перестановка"
+    notation = "P(n) = "
+    sympy_f = sp_factorial(SP_N)
+
+    def __init__(self, n: int):
+        super().__init__(n)
+        self.result = m_factorial(n)
+
+
+class PermutationWithRep(Formula):
+    name = "Перестановка c повторениями"
+    notation = "Pm(k1, k2, ..., kn) = "
+    sympy_f = Expr()
+
+    def __init__(self, *k: List[int]):
+        super().__init__(k)
+        self.result = m_factorial(sum(k)) // reduce(
+            lambda x, y: x * y, map(m_factorial, k)
+        )
 
 
 def formula_print(name, expr) -> str:

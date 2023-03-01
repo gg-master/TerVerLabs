@@ -1,9 +1,9 @@
 import os
 import sympy as sp
 from formulas import (
-    combinations_without_rep,
-    permutation_with_rep,
-    placement_with_rep,
+    CombinationsWithoutRep,
+    PermutationWithRep,
+    PlacementWithRep,
     formula_print,
  )
 
@@ -17,8 +17,7 @@ TASK_1_TEXT = """
 """
 
 COMB_FORMULA = formula_print(
-    "C(n, k) = ",
-    sp.factorial(n) / (sp.factorial(n - k) * sp.factorial(k))
+    CombinationsWithoutRep.notation, CombinationsWithoutRep.sympy_f
 )
 
 TASK_1_PROB_FORMULA = "P(A) = (C(S, l) * C(r - S, k - l)) / C(r, k)"
@@ -33,10 +32,10 @@ TASK_2_TEXT = """
 PERMUTATION_WITH_REP_FORMULA = "Pm(k1, k2, ..., kn) = m! / (k1! * k2! * ... * kn!)"
 
 PLACEMENT_WITH_REP_FORMULA = formula_print(
-    "~A(n, m) = ", n**k
+    PlacementWithRep.notation, PlacementWithRep.sympy_f
 )
 
-TASK_2_PROB_FORMULA = "P(A) = Pm(k1, k2, ..., kn) / ~A(n, m)" 
+TASK_2_PROB_FORMULA = "P(A) = Pm(k1, k2, ..., kn) / ~A(n, m)"
 
 
 def clear_screen():
@@ -84,7 +83,7 @@ def task_solve(number):
             max_S = min(r, l)
             S = int_input('S', f"Ожидаемое количество дефектных изделий (допустимые значения: [{min_S}, {max_S}]): S=", min_S, max_S)
             print("\n")
-            P = (combinations_without_rep(S, l).result * combinations_without_rep(r - S, k - l).result) / combinations_without_rep(r, k).result
+            P = (CombinationsWithoutRep(S, l).result * CombinationsWithoutRep(r - S, k - l).result) / CombinationsWithoutRep(r, k).result
             print(f"Вычисленная вероятность того, что из {r} изделий {S} будут дефектными: P(A) =", round(P, 12))
         else:
             n = int_input('n', "Введите количество каналов связи (допустимые значения: [1, 100]): n=", 1, 100)
@@ -95,7 +94,7 @@ def task_solve(number):
                     f"Количество телеграмм на канале связи {i + 1} (допустимые значения: [0, 100]) k{i + 1}=",
                     0, 100))
             m = sum(k)
-            P = permutation_with_rep(*k).result / placement_with_rep(m, n).result
+            P = PermutationWithRep(*k).result / PlacementWithRep(m, n).result
             print("Вычисленная вероятность: P(A) =", round(P, 12))
     except ValueError as e:
         print(str(e))

@@ -1,9 +1,9 @@
 from formulas import (
-    combinations_without_rep,
-    placement_with_rep,
-    permutation_without_rep,
-    combinations_with_rep,
-    formula_print
+    CombinationsWithoutRep,
+    PlacementWithRep,
+    PermutationWithoutRep,
+    CombinationsWithRep,
+    formula_print,
 )
 
 if __name__ == "__main__":
@@ -19,15 +19,15 @@ if __name__ == "__main__":
             \nОграничения 0 <= k <= 100; 0 <= n <= 100;\n"
     try:
         if type_f == "C":
-            formula = combinations_without_rep(*map(int, input(text).split()))
+            formula = CombinationsWithoutRep(*map(int, input(text).split()))
         elif type_f == "A~":
-            formula = placement_with_rep(*map(int, input(text).split()))
+            formula = PlacementWithRep(*map(int, input(text).split()))
         elif type_f == "P":
-            formula = permutation_without_rep(
+            formula = PermutationWithoutRep(
                 int(input("Введите число n.\nОграничения 0 <= n <= 100\n"))
             )
         elif type_f == "C~":
-            formula = combinations_with_rep(*map(int, input(text).split()))
+            formula = CombinationsWithRep(*map(int, input(text).split()))
         else:
             exit("Тип формулы указан неверно!")
     except ValueError as e:
