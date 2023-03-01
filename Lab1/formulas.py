@@ -1,9 +1,10 @@
 from math import factorial as m_factorial
-from typing import Union
+from typing import Union, Optional
 from dataclasses import dataclass
 from sympy import symbols, pretty
 from sympy import factorial as sp_factorial
 from sympy.core.expr import Expr
+from functools import reduce
 
 
 MIN_VAL = 0
@@ -38,12 +39,12 @@ def global_args_validator(func):
 
 
 @global_args_validator
-def combination_without_rep(k: int, n: int) -> Formula:
+def combinations_without_rep(k: int, n: int) -> Formula:
     # сhecking the condition for a specific formula
     if n < k:
         raise ValueError("Число n должно быть больше числа k!")
 
-    result = (m_factorial(n)) // (m_factorial(n - k) * m_factorial(k))
+    result = (m_factorial(n)) / (m_factorial(n - k) * m_factorial(k))
     return Formula(
         "Сочетание без повторений",
         "C(n; k) = ",
@@ -53,8 +54,8 @@ def combination_without_rep(k: int, n: int) -> Formula:
 
 
 @global_args_validator
-def combination_with_rep(k: int, n: int) -> Formula:
-    f_result: Formula = combination_without_rep(k, n + k - 1)
+def combinations_with_rep(k: int, n: int) -> Formula:
+    f_result: Formula = combinations_without_rep(k, n + k - 1)
     return Formula(
         "Сочетание с повторениями",
         "C~(n; k) = C(n + k - 1; k) = ",
@@ -74,12 +75,23 @@ def placement_with_rep(k: int, n: int) -> Formula:
 
 
 @global_args_validator
-def permutation(n: int) -> Formula:
+def permutation_without_rep(n: int) -> Formula:
     return Formula(
         "Перестановка",
         "P(n) = ",
         sp_factorial(SP_N),
         result=m_factorial(n),
+    )
+
+
+@global_args_validator
+def permutation_with_rep(*k) -> Formula:
+    result = m_factorial(sum(k)) / reduce(lambda x, y: x * y, map(m_factorial, k))
+    return Formula(
+        "Перестановка c повторениями",
+        "Pm(k1, k2, ..., kn) = ",
+        Expr(),
+        result,
     )
 
 
@@ -107,15 +119,15 @@ if __name__ == "__main__":
             \nОграничения 0 <= k <= 100; 0 <= n <= 100;\n"
     try:
         if type_f == "C":
-            formula = combination_without_rep(*map(int, input(text).split()))
+            formula = combinations_without_rep(*map(int, input(text).split()))
         elif type_f == "A~":
             formula = placement_with_rep(*map(int, input(text).split()))
         elif type_f == "P":
-            formula = permutation(
+            formula = permutation_without_rep(
                 int(input("Введите число n.\nОграничения 0 <= n <= 100\n"))
             )
         elif type_f == "C~":
-            formula = combination_with_rep(*map(int, input(text).split()))
+            formula = combinations_with_rep(*map(int, input(text).split()))
         else:
             exit("Тип формулы указан неверно!")
     except ValueError as e:
