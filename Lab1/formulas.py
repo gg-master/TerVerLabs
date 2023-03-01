@@ -74,7 +74,7 @@ class PermutationWithoutRep(Formula):
 
 class PermutationWithRep(Formula):
     name = "Перестановка c повторениями"
-    notation = "Pm(k1, k2, ..., kn) = "
+    notation = "Pm(k1, k2, ..., kn) = m! / (k1! * k2! * ... * kn!)"
     sympy_f = Expr()
 
     def __init__(self, *k: List[int]):

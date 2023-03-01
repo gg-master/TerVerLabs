@@ -29,7 +29,7 @@ TASK_2_TEXT = """
 …, на n-ый канал – kn телеграмм, причем k1 + k2 + ... + kn = m
 """
 
-PERMUTATION_WITH_REP_FORMULA = "Pm(k1, k2, ..., kn) = m! / (k1! * k2! * ... * kn!)"
+PERMUTATION_WITH_REP_FORMULA = PermutationWithRep.notation
 
 PLACEMENT_WITH_REP_FORMULA = formula_print(
     PlacementWithRep.notation, PlacementWithRep.sympy_f
