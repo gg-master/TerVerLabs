@@ -1,5 +1,11 @@
 import unittest
-from task1 import CombinationWithoutRep, PlacementWithRep, Permutation, CombinationWithRep
+from formulas import (
+    combinations_without_rep,
+    placement_with_rep,
+    permutation_without_rep,
+    combinations_with_rep,
+    permutation_with_rep
+)
 
 
 class CombinationsWithoutRepTestCase(unittest.TestCase):
@@ -18,7 +24,7 @@ class CombinationsWithoutRepTestCase(unittest.TestCase):
         ]
         for i in range(len(args)):
             self.assertEqual(
-                CombinationWithoutRep(*args[i]).calculate(), 
+                combinations_without_rep(*args[i]).result, 
                 answers[i])
 
 
@@ -36,7 +42,7 @@ class PlacementWithRepTestCase(unittest.TestCase):
         ]
         for i in range(len(args)):
             self.assertEqual(
-                PlacementWithRep(*args[i]).calculate(), 
+                placement_with_rep(*args[i]).result, 
                 answers[i])
 
 
@@ -51,7 +57,7 @@ class PermutationTestCase(unittest.TestCase):
         ]
         for i in range(len(args)):
             self.assertEqual(
-                Permutation(args[i]).calculate(), 
+                permutation_without_rep(args[i]).result, 
                 answers[i])
 
 
@@ -68,7 +74,23 @@ class CombinationWithRepTestCase(unittest.TestCase):
         ]
         for i in range(len(args)):
             self.assertEqual(
-                CombinationWithRep(*args[i]).calculate(), 
+                combinations_with_rep(*args[i]).result, 
+                answers[i])
+
+
+class PermutationWithRepTestCase(unittest.TestCase):
+    def test_values(self):
+        args = [
+            (2, 3, 5), (3, 4, 5), (2, 2, 1, 9), (10, 8, 2),
+            (6, 4, 3, 2, 5), (6, 4, 8, 2, 5), (6, 8, 9, 12, 5)
+        ]
+        answers = [
+            2520, 27720, 60060, 8314020, 97772875200,
+            92762015346000, 1347444249443795110608000 
+        ]
+        for i in range(len(args)):
+            self.assertEqual(
+                permutation_with_rep(*args[i]).result, 
                 answers[i])
 
 
