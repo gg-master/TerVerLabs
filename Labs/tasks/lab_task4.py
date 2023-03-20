@@ -37,7 +37,7 @@ class Lab2Task4(TaskView):
         self.ph2.clicked.connect(self._on_checkbox_clicked)
 
     def task_name(self):
-        return f"{self._task_number}. Формулы полной вероятности и Байеса."
+        return f"{self._task_number}. Формулы полной вероятности и Байеса"
 
     def _update_count_of_events(self):
         count = self.countOfEvents.value()
