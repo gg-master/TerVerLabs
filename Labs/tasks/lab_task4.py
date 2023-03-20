@@ -3,7 +3,7 @@ import sys
 from widgets import TaskView
 from utils.paths import resolve_path
 from PyQt5 import uic
-from PyQt5.QtWidgets import QDoubleSpinBox, QHBoxLayout, QLabel
+from PyQt5.QtWidgets import QDoubleSpinBox, QHBoxLayout, QLabel, QCheckBox
 from PyQt5.QtGui import QFont
 
 
@@ -32,6 +32,9 @@ class Lab2Task4(TaskView):
         self.h2.valueChanged.connect(self._on_spinbox_input)
         self.c1.valueChanged.connect(self._compute_formulas)
         self.c2.valueChanged.connect(self._compute_formulas)
+        self.all_ph.clicked.connect(self._on_checkbox_clicked)
+        self.ph1.clicked.connect(self._on_checkbox_clicked)
+        self.ph2.clicked.connect(self._on_checkbox_clicked)
 
     def task_name(self):
         return f"{self._task_number}. Формулы полной вероятности и Байеса."
@@ -42,34 +45,74 @@ class Lab2Task4(TaskView):
         # Adding new widgets
         for num in range(self._count_of_events + 1, count + 1, 1):
             self._add_new_envent_spinbox(num)
+            self._add_new_cond_probability(num)
 
         # Remove extra widgets
         for num in range(self._count_of_events, count, -1):
             self._remove_envet_spinbox(num)
+            self._remove_cond_probability(num)
 
         self._count_of_events = count
         self._compute_formulas()
 
+    def _add_new_cond_probability(self, num: int):
+        f = QFont()
+        f.setPixelSize(17)
+
+        chb = QCheckBox(f'P(H{num}|A)')
+        chb.setChecked(False)
+        chb.setObjectName(f'ph{num}')
+        chb.setFont(f)
+        chb.clicked.connect(self._on_checkbox_clicked)
+        self.scrollAreaWidgetContents_2.layout().insertWidget(num + 1, chb)
+
+        setattr(self, f'ph{num}', chb)
+
+    def _remove_cond_probability(self, num: int):
+        chb = getattr(self, f'ph{num}')
+        chb.setVisible(False)
+        chb.disconnect()
+        delattr(self, f'ph{num}')
+
+    def _on_checkbox_clicked(self):
+        if self.sender() is not self.all_ph:
+            self.all_ph.setChecked(False)
+
+        if self.all_ph.isChecked():
+            for num in range(1, self._count_of_events + 1):
+                getattr(self, f'ph{num}').setChecked(True)
+        
+        if self.sender() is self.all_ph and not self.all_ph.isChecked():
+            for num in range(1, self._count_of_events + 1):
+                getattr(self, f'ph{num}').setChecked(False)
+
+        self._compute_formulas()
+
     def _add_new_envent_spinbox(self, num: int):
-        h_spb = QDoubleSpinBox(self)
+        f = QFont()
+        f.setPixelSize(17)
+
+        h_spb = QDoubleSpinBox()
         h_spb.setValue(0.0)
         h_spb.setPrefix(f'P(H{num}) = ')
         h_spb.setObjectName(f'h{num}')
+        h_spb.setFont(f)
         h_spb.setMaximum(1)
         h_spb.setDecimals(3)
         h_spb.setSingleStep(0.01)
         h_spb.valueChanged.connect(self._on_spinbox_input)
 
-        c_spb = QDoubleSpinBox(self)
+        c_spb = QDoubleSpinBox()
         c_spb.setValue(0.0)
         c_spb.setPrefix(f'P(A|H{num}) = ')
         c_spb.setObjectName(f'c{num}')
+        c_spb.setFont(f)
         c_spb.setMaximum(1)
         c_spb.setDecimals(3)
         c_spb.setSingleStep(0.01)
         c_spb.valueChanged.connect(self._compute_formulas)
 
-        layout = QHBoxLayout(self)
+        layout = QHBoxLayout()
         layout.addWidget(h_spb)
         layout.addWidget(c_spb)
 
@@ -130,6 +173,12 @@ class Lab2Task4(TaskView):
 
         self._del_prev_bayes_formulas()
         for num in range(1, self._count_of_events + 1):
+            if (
+                not self.all_ph.isChecked()
+                and not getattr(self, f'ph{num}').isChecked()
+            ):
+                continue
+
             h_spb = getattr(self, f"h{num}")
             c_spb = getattr(self, f"c{num}")
             head = f'P(H{num}|A) = P(H{num}) · P(A|H{num}) / P(A) = '
@@ -145,11 +194,13 @@ class Lab2Task4(TaskView):
             f.setPixelSize(18)
             label.setFont(f)
             label.setText(text)
-            
-            self.scrollAreaWidgetContents_8.layout().insertWidget(num - 1, label)
+
+            self.scrollAreaWidgetContents_8.layout().insertWidget(
+                num - 1, label
+            )
             setattr(self, f'lab{num}', label)
-    
-    def _del_prev_bayes_formulas(self):        
+
+    def _del_prev_bayes_formulas(self):
         for num in range(1, self._count_of_events + 1):
             label = getattr(self, f'lab{num}', None)
             if label is None:
