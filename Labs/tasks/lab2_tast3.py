@@ -1,18 +1,9 @@
-import os
-import sys
 from typing import List
 from widgets import TaskView
 from utils.paths import resolve_path
 from PyQt5 import uic
 
-
-sys.path.append(
-    os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    )
-)
-from Lab1.formulas import CombinationsWithoutRep
-
+from formulas.combinatorics import combinations_without_rep as C
 
 class Lab2Task3(TaskView):
     def __init__(self, task_number: int, parent):
@@ -54,9 +45,9 @@ class Lab2Task3(TaskView):
         m1 = self.m1_val.value()
         m2 = self.m2_val.value()
 
-        c3m1 = CombinationsWithoutRep(3, m1).result
-        c3m2 = CombinationsWithoutRep(3, m2).result
-        c3n = CombinationsWithoutRep(3, n).result
+        c3m1 = C(3, m1)
+        c3m2 = C(3, m2)
+        c3n = C(3, n)
 
         pa1 = c3m1 / c3n
         pa2 = c3m2 / c3n
@@ -76,9 +67,9 @@ class Lab2Task3(TaskView):
         m1 = self.m1_val.value()
         m2 = self.m2_val.value()
 
-        c3m1 = CombinationsWithoutRep(3, m1).result
-        c3m2 = CombinationsWithoutRep(3, m2).result
-        c3n = CombinationsWithoutRep(3, n).result
+        c3m1 = C(3, m1)
+        c3m2 = C(3, m2)
+        c3n = C(3, n)
 
         pb1 = c3m1 / c3n
         pb2 = 1 - (c3m2 / c3n)
@@ -98,9 +89,9 @@ class Lab2Task3(TaskView):
         m1 = self.m1_val.value()
         m2 = self.m2_val.value()
 
-        c3m1 = CombinationsWithoutRep(3, m1).result
-        c3m2 = CombinationsWithoutRep(3, m2).result
-        c3n = CombinationsWithoutRep(3, n).result
+        c3m1 = C(3, m1)
+        c3m2 = C(3, m2)
+        c3n = C(3, n)
 
         res = ((c3m1 / c3n) * (1 - (c3m2 / c3n))) + (
             (c3m2 / c3n) * (1 - (c3m1 / c3n))
