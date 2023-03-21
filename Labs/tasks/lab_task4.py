@@ -1,18 +1,8 @@
-import os
-import sys
 from widgets import TaskView
 from utils.paths import resolve_path
 from PyQt5 import uic
 from PyQt5.QtWidgets import QDoubleSpinBox, QHBoxLayout, QLabel, QCheckBox
 from PyQt5.QtGui import QFont
-
-
-sys.path.append(
-    os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    )
-)
-from Lab1.formulas import CombinationsWithoutRep
 
 
 class Lab2Task4(TaskView):
