@@ -6,7 +6,7 @@ from PyQt5.QtGui import QPixmap
 
 class Lab2_Task1_2(TaskView):
     FORMULA_TASK_1 = "P(B) = P(A<sub>1</sub>) · (1 - P(¬A<sub>2</sub>) · P(¬A<sub>3</sub>) · P(¬A<sub>4</sub>)) · P(A<sub>5</sub>) ="
-    FORMULA_TASK_2 = "P(B) = (1 - P(¬A<sub>1</sub>) · P(¬A<sub>2</sub>)) · P(A<sub>3</sub>) · (1 - P(¬A<sub>4</sub>) · P(¬A<sub>5</sub>) · P(¬A<sub>6</sub>)) ="
+    FORMULA_TASK_2 = "P(B) = (1 - P(¬A<sub>1</sub>) · P(¬A<sub>2</sub>)) · P(A<sub>3</sub>) · (P(A<sub>4</sub>) · P(A<sub>5</sub>) + P(A<sub>6</sub>) - P(A<sub>4</sub>) · P(A<sub>5</sub>) · P(A<sub>6</sub>)) ="
 
     def __init__(self, task_number: int, parent):
         super().__init__(parent)
@@ -23,13 +23,20 @@ class Lab2_Task1_2(TaskView):
         if task_number > 2 or task_number < 1:
             raise ValueError("Invalid task number")
 
+        font = self.formulaText.font()
         if task_number == 1:
             self.formulaText.setText(self.FORMULA_TASK_1)
             self.taskImage.setPixmap(QPixmap(resolve_path("images/lab2_task1.png")))
             self._set_layout_visibility(self.Pa6, False)
+            font.setPointSize(16)
+            self.formulaText.setFont(font)
+            self.result.setFont(font)
             self.Pa6_spinbox.blockSignals(True)
         elif task_number == 2:
+            font.setPointSize(14)
             self.formulaText.setText(self.FORMULA_TASK_2)
+            self.formulaText.setFont(font)
+            self.result.setFont(font)
             self.taskImage.setPixmap(QPixmap(resolve_path("images/lab2_task2.png")))
             self._set_layout_visibility(self.Pa6, True)
 
@@ -53,10 +60,7 @@ class Lab2_Task1_2(TaskView):
     def task2_formula(Pa1, Pa2, Pa3, Pa4, Pa5, Pa6):
         _Pa1 = 1 - Pa1
         _Pa2 = 1 - Pa2
-        _Pa4 = 1 - Pa4
-        _Pa5 = 1 - Pa5
-        _Pa6 = 1 - Pa6
-        return (1 - _Pa1 * _Pa2) * Pa3 * (1 - _Pa4 * _Pa5 * _Pa6) 
+        return (1 - _Pa1 * _Pa2) * Pa3 * (Pa4 * Pa5 + Pa6 - Pa4 * Pa5 * Pa6) 
 
     def compute_probability(self):
         Pa1 = self.Pa1_spinbox.value()

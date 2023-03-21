@@ -453,8 +453,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../images/resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
