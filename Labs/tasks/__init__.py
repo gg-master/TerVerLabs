@@ -3,7 +3,7 @@ from widgets import TaskView
 from functools import partial
 from tasks.lab2_task1_2 import Lab2_Task1_2
 from tasks.lab2_tast3 import Lab2Task3
-from tasks.lab_task4 import Lab2Task4
+from tasks.lab2_task4 import Lab2Task4
 from tasks.lab3_task2 import Lab3Task2
 
 

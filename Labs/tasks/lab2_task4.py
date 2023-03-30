@@ -15,6 +15,7 @@ class Lab2Task4(TaskView):
 
         self._init_ui()
         self._compute_formulas()
+        self._update_count_of_events()
 
     def _init_ui(self):
         self.countOfEvents.valueChanged.connect(self._update_count_of_events)
@@ -44,6 +45,7 @@ class Lab2Task4(TaskView):
 
         self._count_of_events = count
         self._compute_formulas()
+        self.h1.valueChanged.emit(self.h1.value())
 
     def _add_new_cond_probability(self, num: int):
         f = QFont()
@@ -124,7 +126,9 @@ class Lab2Task4(TaskView):
         delattr(self, f'h{num}')
 
     def _on_spinbox_input(self):
-        name = self.sender().objectName()
+        name = self.h1
+        if self.sender() is not None:
+            name = self.sender().objectName()
         sender_attr = getattr(self, f"{name}")
 
         s = 0
