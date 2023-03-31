@@ -8,8 +8,10 @@ from formulas.probabilities import bernoulli_formula, moivre_laplace_integral_fo
 
 
 class Lab3Task2(TaskView):
-    def __init__(self, parent):
+    def __init__(self, task_number: int, parent):
         super().__init__(parent)
+        self._task_number: int = task_number
+
         uic.loadUi(resolve_path('ui/lab3_task2.ui'), self)
         self.n_spinbox.valueChanged.connect(self.m_value_set)
         self.m1_spinbox.valueChanged.connect(self.m_value_set)
@@ -60,4 +62,4 @@ class Lab3Task2(TaskView):
 
     
     def task_name(self):
-        return "2. Интегральная теорема Муавра-Лапласа"
+        return f"{self._task_number}. Интегральная теорема Муавра-Лапласа"

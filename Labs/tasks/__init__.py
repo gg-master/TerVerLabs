@@ -5,6 +5,7 @@ from tasks.lab2_task1_2 import Lab2_Task1_2
 from tasks.lab2_tast3 import Lab2Task3
 from tasks.lab2_task4 import Lab2Task4
 from tasks.lab3_task2 import Lab3Task2
+from tasks.lab3_task1 import Lab3Task1
 
 
 labs = {
@@ -15,7 +16,8 @@ labs = {
         partial(Lab2Task4, 4)
     ],
     3: [
-        Lab3Task2
+        partial(Lab3Task1, 1),
+        partial(Lab3Task2, 2),
     ]
 }
 
