@@ -39,7 +39,7 @@ class Lab3Task1(TaskView):
     def task_name(self):
         return f"{self._task_number}. Применение формулы Бернулли и полиномиальной формулы"
 
-    # ------------------------ BERNULLLI FROMULAS ---------------------------------
+    # ------------------------ BERNULLI FROMULAS ------------------------------
     def _bernulli_change_formula(self):
         sender_attr = getattr(self, f"{self.sender().objectName()}")
 
@@ -66,8 +66,8 @@ class Lab3Task1(TaskView):
             start = self.bernulli_input_m_1.value()
             end = self.bernulli_input_m_2.value()
         elif self.b_less.isChecked():
+            end = start - 1
             start = 0
-            end = self.bernulli_input_m_2.value()
         elif self.b_equal_or_greater.isChecked():
             start = self.bernulli_input_m_2.value()
             end = self.b_n.value()
@@ -82,7 +82,7 @@ class Lab3Task1(TaskView):
             )
         )
 
-    # ------------------------ POLINOM FORMULAS -----------------------------------
+    # ------------------------ POLINOM FORMULAS -------------------------------
     def _update_count_of_m(self):
         count = self.p_k.value()
 

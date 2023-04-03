@@ -36,4 +36,5 @@ def moivre_laplace_integral_formula(
 
 
 def laplace_function(x) -> float:
-    return (1 / sqrt(2 * pi)) * (sqrt(pi) * erf(x / sqrt(2)) / sqrt(2))
+    # return (1 / sqrt(2 * pi)) * (sqrt(pi) * erf(x / sqrt(2)) / sqrt(2))
+    return erf(x / sqrt(2)) * 0.5
