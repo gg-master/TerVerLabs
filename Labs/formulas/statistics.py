@@ -1,7 +1,7 @@
 from collections import Counter
 from math import sqrt
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, List
 
 
 @dataclass
@@ -16,7 +16,19 @@ class DiscreteData:
     S: float
 
 
-def process_discrete_data(data):
+@dataclass
+class ContinuousData:
+    intervals: List[List[float]]
+    N: list[int]
+    W: list[float]
+    middles: list[float]
+    x_v: float
+    sigma: float
+    D_v: float
+    S: float
+
+
+def process_discrete_data(data) -> DiscreteData:
     counter = Counter(data)
     # Частота
     x_n = {}
@@ -46,6 +58,84 @@ def process_discrete_data(data):
     S /= sum_n - 1
     S = sqrt(S)
     return DiscreteData(list(x_n.keys()), x_n, x_w, sum_n, Xv, sigma, Dv, S)
+
+
+def process_continuous_data(data):
+    h = max(data) - min(data) // len(data)
+    xmax = max(data)
+    sorted_uniq_data = list(sorted(set(data)))
+    intervals = []
+    middles = []
+    N = []
+    W = []
+    #Интервалы и их середины
+    for number in sorted_uniq_data:
+        intervals.append([number, min(number + h, xmax)])
+        middles.append(round((min(number + h, xmax) - number) / 2, 2))
+    # Частота для интервалов
+    for interval in intervals:
+        N.append(data.count(interval[0]))
+    Nsum = sum(N)
+    assert len(data) == Nsum
+    # Относительная частота для интервалов
+    for ni in N:
+        W.append(ni / Nsum)
+    # Среднее выборочное
+    Xv = 0
+    for i, xi in enumerate(middles):
+        Xv += xi * N[i]
+    Xv /= Nsum
+    # Выборочная дисперсия
+    Dv = 0
+    for i, xi in enumerate(middles):
+        Dv += (xi - Xv)**2 * N[i]
+    Dv /= Nsum
+    # Среднее квадратическое отклонение
+    sigma = sqrt(Dv)
+    # Исправленное среднее квадратическое отклонение
+    S = 0
+    for i, xi in enumerate(middles):
+        S += (xi - Xv)**2 * N[i]
+    S /= Nsum - 1
+    S = sqrt(S)
+    return ContinuousData(intervals, N, W, middles, Xv, sigma, Dv, S)
+    
+
+def process_continuous_plot_data(data: ContinuousData):
+    plot_data = {}
+    k = len(data.intervals)
+    f = {'lines': [], 'dotsx': [], 'dotsy': []}
+    func = '0,\tпри x <= ' + str(round(data.intervals[0][1], 3)) + '\n'
+
+    intlen = 3 * (data.intervals[0][1] - data.intervals[0][0])
+    line = [[data.intervals[1] - intlen, data.intervals[0][1]], [0, 0]]
+    f['lines'].append(line)
+
+    counter = data.W[0]
+    for i in range(1, k):
+        newstr = ''
+        newstr += str(round(counter, 2)) + ',\tпри ' + str(round(data.intervals[i - 1][1], 3)) + ' < x <= '\
+                                                         + str(round(data.intervals[i][1], 3))
+        line = [[data.intervals[i][1], data.intervals[i][0]], [counter, counter]]
+        f['lines'].append(line)
+
+        f['dotsx'].append(data.intervals[i - 1][1])
+        f['dotsy'].append(counter)
+
+        counter += data.W[i]
+        func += newstr + '\n'
+    func += '1,\tпри x > ' + str(round(data.intervals[k - 1][1], 3))
+
+    line = [[data.intervals[k - 1][1], data.intervals[k - 1][1] + intlen], [counter, counter]]
+    f['lines'].append(line)
+
+    f['dotsx'].append(data.intervals[k - 1][1])
+    f['dotsy'].append(counter)
+
+    plot_data['F*'] = func
+    plot_data['func'] = f
+
+    return plot_data
 
 
 def process_discrete_plot_data(discrete_data: DiscreteData):
