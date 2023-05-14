@@ -59,8 +59,7 @@ class Histogram(BasicGraph):
 
     def display(self, bounds, mids, weights, xl='x', yl='y', color='b', name=None):
         self.redo(self.axes, 0, name, xl, yl)
-
-        intlen = bounds[1] - bounds[0]
+        intlen = bounds[-1] - bounds[0]
         ws = []
         for weight in weights:
             ws.append(weight / intlen)

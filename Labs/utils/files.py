@@ -27,7 +27,7 @@ def parse_statistic_file(filename):
             else:
                 if "," in current_token or "." in current_token:
                     data.append(float(current_token.replace(",", ".")))
-                else:
+                elif current_token:
                     data.append(int(current_token))
                 current_token = ""
     if current_token:
