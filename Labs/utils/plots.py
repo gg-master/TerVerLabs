@@ -71,25 +71,11 @@ class Histogram(BasicGraph):
 class Polygon(BasicGraph):
     def __init__(self, parent=None, name=None, w=5, h=4, dpi=100):
         BasicGraph.__init__(self, parent, name, w, h, dpi)
-        self._gap_x = None
-
-    def set_x_gap(self, x):
-        self._gap_x = x
 
     def display(self, x, y, xl='x', yl='y', color='b', name=None):
         self.redo(self.axes, 0, name, xl, yl)
 
         self.axes.plot(x, y, color)
-
-        xticks = list(self.axes.get_xticks())
-        xtickslabels = list(map(str, xticks))
-
-        if self._gap_x:
-            xticks.insert(0, self._gap_x)
-            xtickslabels.insert(0, "~")
-
-        self.axes.set_xticks(xticks)
-        self.axes.set_xticklabels(xtickslabels)
 
         self.draw()
 
