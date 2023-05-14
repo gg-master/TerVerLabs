@@ -19,7 +19,7 @@ def parse_statistic_file(filename):
             if not char:
                 break
 
-            if not char.isdigit() and char not in [" ", ",", "."] and not char.isspace():
+            if not char.isdigit() and char not in "-., " and not char.isspace():
                 raise ValueError("Неверный символ в файле статистических данных")
             
             if not char.isspace():
