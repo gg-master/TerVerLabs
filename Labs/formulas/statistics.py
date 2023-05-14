@@ -1,6 +1,6 @@
 from collections import Counter
 from math import sqrt
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, List
 
 
@@ -47,59 +47,121 @@ def process_discrete_data(data) -> DiscreteData:
     # Выборочная дисперсия
     Dv = 0
     for xi in x_n:
-        Dv += (xi - Xv)**2 * x_n[xi]
+        Dv += (xi - Xv) ** 2 * x_n[xi]
     Dv /= sum_n
     # Среднее квадратическое отклонение
     sigma = sqrt(Dv)
     # Исправленное среднее квадратическое отклонение
     S = 0
     for xi in x_n:
-        S += (xi - Xv)**2 * x_n[xi]
+        S += (xi - Xv) ** 2 * x_n[xi]
     S /= sum_n - 1
     S = sqrt(S)
     return DiscreteData(list(x_n.keys()), x_n, x_w, sum_n, Xv, sigma, Dv, S)
 
 
-def process_continuous_data(data):
-    h = max(data) - min(data) // len(data)
+def process_continuous_data(data, count) -> ContinuousData:
+    h = (max(data) - min(data)) / count
     xmax = max(data)
     sorted_uniq_data = list(sorted(set(data)))
     intervals = []
     middles = []
     N = []
     W = []
-    #Интервалы и их середины
-    for number in sorted_uniq_data:
-        intervals.append([number, min(number + h, xmax)])
-        middles.append(round((min(number + h, xmax) - number) / 2, 2))
-    # Частота для интервалов
-    for interval in intervals:
-        N.append(data.count(interval[0]))
+    # Интервалы и их середины
+    number = min(data)
+    for i in range(count):
+        right_border = min(number + h, xmax)
+        intervals.append([number, right_border])
+        middles.append(number + round((right_border - number) / 2, 2))
+
+        # Частота для интервалов
+        interval_count = 0
+        for val in data:
+            if i == count - 1:
+                right_border += 1
+
+            if number <= val < right_border:
+                interval_count += 1
+        N.append(interval_count)
+        number += h
+
+    # Проверка частот для интервалов
     Nsum = sum(N)
     assert len(data) == Nsum
+
     # Относительная частота для интервалов
     for ni in N:
         W.append(ni / Nsum)
+
     # Среднее выборочное
     Xv = 0
     for i, xi in enumerate(middles):
         Xv += xi * N[i]
     Xv /= Nsum
+
     # Выборочная дисперсия
     Dv = 0
     for i, xi in enumerate(middles):
-        Dv += (xi - Xv)**2 * N[i]
+        Dv += (xi - Xv) ** 2 * N[i]
     Dv /= Nsum
+
     # Среднее квадратическое отклонение
     sigma = sqrt(Dv)
+
     # Исправленное среднее квадратическое отклонение
     S = 0
     for i, xi in enumerate(middles):
-        S += (xi - Xv)**2 * N[i]
+        S += (xi - Xv) ** 2 * N[i]
     S /= Nsum - 1
     S = sqrt(S)
     return ContinuousData(intervals, N, W, middles, Xv, sigma, Dv, S)
-    
+
+
+def process_continuous_intervals(interAndN: ContinuousData) -> ContinuousData:
+    for i in interAndN.intervals:
+        mid = (i[1] - i[0]) / 2 + i[0]
+        interAndN.middles.append(mid)
+
+    #   Относительные частоты
+    W = []
+    Nsum = sum(interAndN.N)
+    for ni in interAndN.N:
+        W.append(ni / Nsum)
+    interAndN.W = W
+
+    # Среднее выборочное
+    Xv = 0
+    for i, xi in enumerate(interAndN.middles):
+        Xv += xi * interAndN.N[i]
+    Xv /= Nsum
+
+    # Выборочная дисперсия
+    Dv = 0
+    for i, xi in enumerate(interAndN.middles):
+        Dv += (xi - Xv) ** 2 * interAndN.N[i]
+    Dv /= Nsum
+
+    # Среднее квадратическое отклонение
+    sigma = sqrt(Dv)
+
+    # Исправленное среднее квадратическое отклонение
+    S = 0
+    for i, xi in enumerate(interAndN.middles):
+        S += (xi - Xv) ** 2 * interAndN.N[i]
+    S /= Nsum - 1
+    S = sqrt(S)
+    return ContinuousData(
+        interAndN.intervals,
+        interAndN.N,
+        interAndN.W,
+        interAndN.middles,
+        Xv,
+        sigma,
+        Dv,
+        S,
+    )
+
 
 def process_continuous_plot_data(data: ContinuousData):
     plot_data = {}
@@ -108,15 +170,23 @@ def process_continuous_plot_data(data: ContinuousData):
     func = '0,\tпри x <= ' + str(round(data.intervals[0][1], 3)) + '\n'
 
     intlen = 3 * (data.intervals[0][1] - data.intervals[0][0])
-    line = [[data.intervals[1] - intlen, data.intervals[0][1]], [0, 0]]
+    line = [[data.intervals[0][1] - intlen, data.intervals[0][1]], [0, 0]]
     f['lines'].append(line)
 
     counter = data.W[0]
     for i in range(1, k):
         newstr = ''
-        newstr += str(round(counter, 2)) + ',\tпри ' + str(round(data.intervals[i - 1][1], 3)) + ' < x <= '\
-                                                         + str(round(data.intervals[i][1], 3))
-        line = [[data.intervals[i][1], data.intervals[i][0]], [counter, counter]]
+        newstr += (
+            str(round(counter, 2))
+            + ',\tпри '
+            + str(round(data.intervals[i - 1][1], 3))
+            + ' < x <= '
+            + str(round(data.intervals[i][1], 3))
+        )
+        line = [
+            [data.intervals[i][1], data.intervals[i][0]],
+            [counter, counter],
+        ]
         f['lines'].append(line)
 
         f['dotsx'].append(data.intervals[i - 1][1])
@@ -126,7 +196,10 @@ def process_continuous_plot_data(data: ContinuousData):
         func += newstr + '\n'
     func += '1,\tпри x > ' + str(round(data.intervals[k - 1][1], 3))
 
-    line = [[data.intervals[k - 1][1], data.intervals[k - 1][1] + intlen], [counter, counter]]
+    line = [
+        [data.intervals[k - 1][1], data.intervals[k - 1][1] + intlen],
+        [counter, counter],
+    ]
     f['lines'].append(line)
 
     f['dotsx'].append(data.intervals[k - 1][1])
@@ -143,7 +216,7 @@ def process_discrete_plot_data(discrete_data: DiscreteData):
     f = {'lines': [], 'dotsx': [], 'dotsy': []}
     plot_data = {}
     k = len(discrete_data.X)
-    
+
     func = '0,\tпри x < ' + str(discrete_data.X[0]) + '\n'
 
     intlen = 3 * (discrete_data.X[1] - discrete_data.X[0])
@@ -153,19 +226,31 @@ def process_discrete_plot_data(discrete_data: DiscreteData):
     counter = list(discrete_data.x_w.values())[0]
     for i in range(1, k):
         newstr = ''
-        newstr += str(round(counter, 2)) + ',\tпри ' + str(discrete_data.X[i - 1]) + ' <= x < ' + str(discrete_data.X[i])
+        newstr += (
+            str(round(counter, 2))
+            + ',\tпри '
+            + str(discrete_data.X[i - 1])
+            + ' <= x < '
+            + str(discrete_data.X[i])
+        )
 
-        line = [[discrete_data.X[i - 1], discrete_data.X[i]], [counter, counter]]
+        line = [
+            [discrete_data.X[i - 1], discrete_data.X[i]],
+            [counter, counter],
+        ]
         f['lines'].append(line)
 
-        f['dotsx'].append(discrete_data.X[i-1])
+        f['dotsx'].append(discrete_data.X[i - 1])
         f['dotsy'].append(counter)
 
         counter += list(discrete_data.x_w.values())[i]
         func += newstr + '\n'
 
     func += '1,\tпри x >= ' + str(discrete_data.X[k - 1])
-    line = [[discrete_data.X[k - 1],discrete_data.X[k - 1] + intlen], [counter, counter]]
+    line = [
+        [discrete_data.X[k - 1], discrete_data.X[k - 1] + intlen],
+        [counter, counter],
+    ]
     f['lines'].append(line)
 
     f['dotsx'].append(discrete_data.X[k - 1])
