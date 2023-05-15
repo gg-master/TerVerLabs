@@ -83,25 +83,27 @@ class Lab5Task2(TaskView):
                 raise ValueError('Обанружена пустая клетка интервала.')
             interval = interval.text()
 
-            if ';' not in interval: 
+            if ';' not in interval:
                 raise ValueError('Неправильно указан интервал.')
-            
-            left, righ = interval.replace(' ', '').split(';')
+
+            left, righ = interval.replace(' ', '').replace(',', '.').split(';')
             data.intervals.append([float(left), float(righ)])
 
             freq = self.table.item(1, i)
             if freq is None:
                 raise ValueError('Обанружена пустая клетка частоты.')
-            
+
             data.N.append(int(freq.text()))
 
         return process_continuous_intervals(data)
-        
+
     def load_data(self):
         interval_count = self.intervalCount.value()
 
         if not self.manualInput.isChecked():
-            continuous_data = process_continuous_data(self.data, interval_count)
+            continuous_data = process_continuous_data(
+                self.data, interval_count
+            )
         else:
             try:
                 continuous_data = self.read_manual_data()
@@ -143,13 +145,21 @@ class Lab5Task2(TaskView):
         )
 
         # Полигон частот и относительных частот
+        self.freq_polygon_plot.set_x_gap(None)
+        self.relfreq_polygon_plot.set_x_gap(None)
+
+        Xmin = continuous_data.middles[0]
+        if continuous_data.middles[0] > 100:
+            self.freq_polygon_plot.set_x_gap(round(Xmin * 0.9, 2))
+            self.relfreq_polygon_plot.set_x_gap(round(Xmin * 0.9, 2))
+
         self.freq_polygon_plot.display(
-            continuous_data.middles, continuous_data.N, 'xi', 'ni'
+            continuous_data.middles, continuous_data.N, 'xi*', 'ni'
         )
         self.relfreq_polygon_plot.display(
             continuous_data.middles,
             continuous_data.W,
-            'xi',
+            'xi*',
             'ωi',
             color='#16db16',
         )
@@ -157,18 +167,25 @@ class Lab5Task2(TaskView):
         bounds = list(map(lambda x: x[0], continuous_data.intervals))
         bounds.append(continuous_data.intervals[-1][1])
 
+        self.continuous_histogram_plot.set_x_gap(None)
+        self.continuous_rel_histogram_plot.set_x_gap(None)
+        Xmin = continuous_data.intervals[0][0]
+        if continuous_data.middles[0] > 100:
+            self.continuous_histogram_plot.set_x_gap(round(Xmin - (Xmin / 4), 2))
+            self.continuous_rel_histogram_plot.set_x_gap(round(Xmin - (Xmin / 4), 2))
+
         self.continuous_histogram_plot.display(
             bounds,
             continuous_data.middles,
             continuous_data.N,
-            'xi',
+            'xi*',
             'ni',
         )
         self.continuous_rel_histogram_plot.display(
             bounds,
             continuous_data.middles,
             continuous_data.W,
-            'xi',
+            'xi*',
             'ωi',
             color='#16db16',
         )
@@ -208,7 +225,7 @@ class Lab5Task2(TaskView):
             'значения xi и ni и нажмите "Рассчитать". '
             'Границы интервалов должны разделяться ";"'
         )
-    
+
     def interval_count_changed(self):
         self.table.setColumnCount(self.intervalCount.value())
 

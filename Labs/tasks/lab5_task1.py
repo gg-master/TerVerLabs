@@ -72,6 +72,11 @@ class Lab5Task1(TaskView):
                 self.discrete_function_graph.display(plot_data['func'], 'x', 'F*(x)', color='k')
 
                 # Полигон частот и относительных частот
+                self.freq_polygon_plot.set_x_gap(None)
+                self.relfreq_polygon_plot.set_x_gap(None)   
+                if discete_data.X[0] > 100:
+                    self.freq_polygon_plot.set_x_gap(round(discete_data.X[0] - (discete_data.X[0] / 4), 2))
+                    self.relfreq_polygon_plot.set_x_gap(round(discete_data.X[0] - (discete_data.X[0] / 4), 2))
                 self.freq_polygon_plot.display(discete_data.X, discete_data.x_n.values(), 'xi', 'ni')
                 self.relfreq_polygon_plot.display(discete_data.X, discete_data.x_w.values(), 'xi', 'ωi', color='#16db16')
             except Exception as e:

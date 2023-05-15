@@ -56,6 +56,10 @@ class Function(BasicGraph):
 class Histogram(BasicGraph):
     def __init__(self, parent=None, name=None, w=5, h=4, dpi=100):
         BasicGraph.__init__(self, parent, name, w, h, dpi)
+        self._gap_x = None
+
+    def set_x_gap(self, x):
+        self._gap_x = x
 
     def display(self, bounds, mids, weights, xl='x', yl='y', color='b', name=None):
         self.redo(self.axes, 0, name, xl, yl)
@@ -65,17 +69,50 @@ class Histogram(BasicGraph):
             ws.append(weight / intlen)
         self.axes.hist(mids, bins=bounds, weights=ws, color=color)
 
+        xticks = list(self.axes.get_xticks())
+        xtickslabels = list(map(str, xticks))
+
+        if self._gap_x:
+            xticks.insert(0, self._gap_x)
+            xtickslabels.insert(0, "≈")
+            if '0.0' not in xtickslabels and '0' not in xtickslabels:
+                xticks.insert(0, self._gap_x - (self._gap_x / 5))
+                xtickslabels.insert(0, "0")
+            
+        self.axes.set_xticks(xticks)
+        self.axes.set_xticklabels(xtickslabels)
+
         self.draw()
 
 
 class Polygon(BasicGraph):
     def __init__(self, parent=None, name=None, w=5, h=4, dpi=100):
         BasicGraph.__init__(self, parent, name, w, h, dpi)
+        self._gap_x = None
+
+    def set_x_gap(self, x):
+        self._gap_x = x
 
     def display(self, x, y, xl='x', yl='y', color='b', name=None):
         self.redo(self.axes, 0, name, xl, yl)
 
         self.axes.plot(x, y, color)
+
+        xticks = list(self.axes.get_xticks())
+        xtickslabels = list(map(str, xticks))
+
+        if self._gap_x:
+            xticks = list(filter(lambda xi: xi >= x[0], xticks))
+            xtickslabels = list(map(str, xticks))
+            
+            xticks.insert(0, self._gap_x)
+            xtickslabels.insert(0, "≈")
+            
+            xticks.insert(0, self._gap_x * 0.9)
+            xtickslabels.insert(0, "0")
+            
+        self.axes.set_xticks(xticks)
+        self.axes.set_xticklabels(xtickslabels)
 
         self.draw()
 
