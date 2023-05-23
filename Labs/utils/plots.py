@@ -69,7 +69,7 @@ class Histogram(BasicGraph):
             ws.append(weight / intlen)
         self.axes.hist(mids, bins=bounds, weights=ws, color=color)
 
-        xticks = list(self.axes.get_xticks())
+        xticks = list(map(lambda x: round(x, 3), self.axes.get_xticks()))
         xtickslabels = list(map(str, xticks))
 
         if self._gap_x:
@@ -98,7 +98,7 @@ class Polygon(BasicGraph):
 
         self.axes.plot(x, y, color)
 
-        xticks = list(self.axes.get_xticks())
+        xticks = list(map(lambda x: round(x, 3), self.axes.get_xticks()))
         xtickslabels = list(map(str, xticks))
 
         if self._gap_x:

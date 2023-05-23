@@ -71,9 +71,9 @@ def process_continuous_data(data, count) -> ContinuousData:
     # Интервалы и их середины
     number = min(data)
     for i in range(count):
-        right_border = min(number + h, xmax)
+        right_border = round(min(number + h, xmax), 3)
         intervals.append([number, right_border])
-        middles.append(number + round((right_border - number) / 2, 2))
+        middles.append(round(number + round((right_border - number) / 2, 3), 3))
 
         # Частота для интервалов
         interval_count = 0
@@ -84,7 +84,7 @@ def process_continuous_data(data, count) -> ContinuousData:
             if number <= val < right_border:
                 interval_count += 1
         N.append(interval_count)
-        number += h
+        number = round(number + h, 3)
 
     # Проверка частот для интервалов
     Nsum = sum(N)
