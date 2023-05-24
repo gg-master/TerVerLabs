@@ -289,7 +289,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="elideMode">
           <enum>Qt::ElideNone</enum>
@@ -880,19 +880,6 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_11">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>f(x)=</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QWidget" name="density_plot" native="true"/>
                </item>
               </layout>
@@ -901,9 +888,9 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="continuous_rel_polygon">
+         <widget class="QWidget" name="continuous_rel_histpolygon">
           <attribute name="title">
-           <string>Полигон относительных частот</string>
+           <string>Гистограмма относительных частот</string>
           </attribute>
          </widget>
          <widget class="QWidget" name="probabilites">
@@ -939,13 +926,31 @@
              </item>
              <item>
               <widget class="QLabel" name="label_9">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Cambria Math</family>
+                 <pointsize>21</pointsize>
+                 <italic>false</italic>
+                </font>
+               </property>
                <property name="text">
-                <string>Вероятность попадания в интервал: p =</string>
+                <string>=</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QLabel" name="prob_label">
+               <property name="font">
+                <font>
+                 <pointsize>21</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -979,6 +984,12 @@
                </property>
                <property name="maximum">
                 <double>1.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.010000000000000</double>
+               </property>
+               <property name="value">
+                <double>0.010000000000000</double>
                </property>
               </widget>
              </item>
@@ -1198,7 +1209,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="xv_label_2">
+              <widget class="QLabel" name="chi2_exp_label">
                <property name="font">
                 <font>
                  <pointsize>18</pointsize>

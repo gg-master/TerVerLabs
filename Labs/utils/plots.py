@@ -53,6 +53,21 @@ class Function(BasicGraph):
         self.draw()
 
 
+class ContinuousFunction(BasicGraph):
+    def __init__(self, parent=None, name=None, w=4, h=3, dpi=100):
+        BasicGraph.__init__(self, parent, name, w, h, dpi)
+
+    def display(self, func, xl='x', yl='y', color='b', name=None):
+        self.redo(self.axes, 0, name, xl, yl)
+
+        self.axes.plot(func[0], func[1], color=color)
+
+        #self.axes.set_xbound(lx, rx)
+        #self.axes.set_ybound(0, 1.1)
+
+        self.draw()
+
+
 class Histogram(BasicGraph):
     def __init__(self, parent=None, name=None, w=5, h=4, dpi=100):
         BasicGraph.__init__(self, parent, name, w, h, dpi)
@@ -65,8 +80,11 @@ class Histogram(BasicGraph):
         self.redo(self.axes, 0, name, xl, yl)
         intlen = bounds[-1] - bounds[0]
         ws = []
-        for weight in weights:
-            ws.append(weight / h)
+        for i, weight in enumerate(weights):
+            if hasattr(h, "__iter__"):
+                ws.append(weight / h[i])
+            else:
+                ws.append(weight / h)
         self.axes.hist(mids, bins=bounds, weights=ws, color=color)
 
         xticks = list(map(lambda x: round(x, 3), self.axes.get_xticks()))
@@ -83,6 +101,44 @@ class Histogram(BasicGraph):
         self.axes.set_xticklabels(xtickslabels)
 
         self.draw()
+
+
+class PolygonHistogram(BasicGraph):
+    def __init__(self, parent=None, name=None, w=5, h=4, dpi=100):
+        BasicGraph.__init__(self, parent, name, w, h, dpi)
+        self._gap_x = None
+
+    def set_x_gap(self, x):
+        self._gap_x = x
+
+    def display(self, bounds, h, mids, weights, xl='x', yl='y', color='b', name=None):
+        self.redo(self.axes, 0, name, xl, yl)
+        intlen = bounds[-1] - bounds[0]
+        ws = []
+        for i, weight in enumerate(weights):
+            if hasattr(h, "__iter__"):
+                ws.append(weight / h[i])
+            else:
+                ws.append(weight / h)
+        self.axes.hist(mids, bins=bounds, weights=ws, color=color)
+        self.axes.plot(mids, ws, "r")
+        self.axes.scatter(mids, ws, color="r")
+
+        xticks = list(map(lambda x: round(x, 3), self.axes.get_xticks()))
+        xtickslabels = list(map(str, xticks))
+
+        if self._gap_x:
+            xticks.insert(0, self._gap_x)
+            xtickslabels.insert(0, "≈")
+            if '0.0' not in xtickslabels and '0' not in xtickslabels:
+                xticks.insert(0, self._gap_x - (self._gap_x / 5))
+                xtickslabels.insert(0, "0")
+            
+        self.axes.set_xticks(xticks)
+        self.axes.set_xticklabels(xtickslabels)
+
+        self.draw()
+
 
 
 class Polygon(BasicGraph):

@@ -1,6 +1,6 @@
 from collections import Counter
-from math import sqrt, erf
-from dataclasses import dataclass, field
+from math import sqrt, erf, pi, exp
+from dataclasses import dataclass
 from typing import Dict, List
 
 
@@ -265,7 +265,23 @@ def process_discrete_plot_data(discrete_data: DiscreteData):
     return plot_data
 
 
-def normal_theorethical_probability(x, i, a, sigma):
-    t2 = (x[i + 1] - a) / sigma
-    t1 = (x[i] - a) / sigma
+def normal_theorethical_probability(interval, a, sigma):
+    t2 = (interval[1] - a) / sigma
+    t1 = (interval[0] - a) / sigma
     return 0.5 * (erf(t2 / sqrt(2)) - erf(t1 / sqrt(2)))
+
+
+def process_normal_density(a, sigma):
+    density = lambda x, a, sigma: (1 / (sqrt(2 * pi) * sigma)) * exp(-(((x - a)**2) / (2 * sigma**2)))
+    x = [i for i in range(-100, 100)]
+    y = [density(xi, a, sigma) for xi in x]
+    return x, y
+
+
+def normal_chi2(m, a, sigma, data: ContinuousData):
+    value = 0
+    n = sum(data.N)
+    for i in range(m):
+        value += (data.N[i]**2) / (n * normal_theorethical_probability(data.intervals[i], a, sigma))
+    value -= n
+    return value
