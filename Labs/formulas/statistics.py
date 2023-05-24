@@ -1,5 +1,5 @@
 from collections import Counter
-from math import sqrt
+from math import sqrt, erf
 from dataclasses import dataclass, field
 from typing import Dict, List
 
@@ -26,6 +26,7 @@ class ContinuousData:
     sigma: float
     D_v: float
     S: float
+    h: float
 
 
 def process_discrete_data(data) -> DiscreteData:
@@ -115,7 +116,7 @@ def process_continuous_data(data, count) -> ContinuousData:
         S += (xi - Xv) ** 2 * N[i]
     S /= Nsum - 1
     S = sqrt(S)
-    return ContinuousData(intervals, N, W, middles, Xv, sigma, Dv, S)
+    return ContinuousData(intervals, N, W, middles, Xv, sigma, Dv, S, h)
 
 
 def process_continuous_intervals(interAndN: ContinuousData) -> ContinuousData:
@@ -151,6 +152,7 @@ def process_continuous_intervals(interAndN: ContinuousData) -> ContinuousData:
         S += (xi - Xv) ** 2 * interAndN.N[i]
     S /= Nsum - 1
     S = sqrt(S)
+    h = interAndN.intervals[0][1] - interAndN.intervals[0][0]
     return ContinuousData(
         interAndN.intervals,
         interAndN.N,
@@ -160,6 +162,7 @@ def process_continuous_intervals(interAndN: ContinuousData) -> ContinuousData:
         sigma,
         Dv,
         S,
+        h,
     )
 
 
@@ -260,3 +263,9 @@ def process_discrete_plot_data(discrete_data: DiscreteData):
     plot_data['func'] = f
 
     return plot_data
+
+
+def normal_theorethical_probability(x, i, a, sigma):
+    t2 = (x[i + 1] - a) / sigma
+    t1 = (x[i] - a) / sigma
+    return 0.5 * (erf(t2 / sqrt(2)) - erf(t1 / sqrt(2)))

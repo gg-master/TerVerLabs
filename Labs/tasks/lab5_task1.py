@@ -61,7 +61,7 @@ class Lab5Task1(TaskView):
 
                 # Основные харрактеристики
 
-                self.varSeries.setText("; ".join(sorted(map(lambda x: str(x).replace(".", ","), self.data))))
+                self.varSeries.setText("; ".join(map(lambda x: str(x).replace(".", ","), sorted(self.data))))
                 self.xv_label.setText(str(round(discete_data.x_v, 5)))
                 self.dv_label.setText(str(round(discete_data.D_v, 5)))
                 self.sigma_v_label.setText(str(round(discete_data.sigma, 5)))

@@ -75,23 +75,23 @@ class Lab5Task2(TaskView):
 
     def read_manual_data(self):
         count = self.intervalCount.value()
-        data = ContinuousData([], [], [], [], 0, 0, 0, 0)
+        data = ContinuousData([], [], [], [], 0, 0, 0, 0, 0)
 
         for i in range(count):
             interval = self.table.item(0, i)
             if interval is None:
-                raise ValueError('Обанружена пустая клетка интервала.')
+                raise ValueError('Обнаружена пустая клетка интервала.')
             interval = interval.text()
 
             if ';' not in interval:
                 raise ValueError('Неправильно указан интервал.')
-
+            
             left, righ = interval.replace(' ', '').replace(',', '.').split(';')
             data.intervals.append([float(left), float(righ)])
 
             freq = self.table.item(1, i)
             if freq is None:
-                raise ValueError('Обанружена пустая клетка частоты.')
+                raise ValueError('Обнаружена пустая клетка частоты.')
 
             data.N.append(int(freq.text()))
 
@@ -176,17 +176,19 @@ class Lab5Task2(TaskView):
 
         self.continuous_histogram_plot.display(
             bounds,
+            continuous_data.h,
             continuous_data.middles,
             continuous_data.N,
             'xi*',
-            'ni',
+            'ni/h',
         )
         self.continuous_rel_histogram_plot.display(
             bounds,
+            continuous_data.h,
             continuous_data.middles,
             continuous_data.W,
             'xi*',
-            'ωi',
+            'ωi/h',
             color='#16db16',
         )
 

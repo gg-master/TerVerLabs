@@ -61,12 +61,12 @@ class Histogram(BasicGraph):
     def set_x_gap(self, x):
         self._gap_x = x
 
-    def display(self, bounds, mids, weights, xl='x', yl='y', color='b', name=None):
+    def display(self, bounds, h, mids, weights, xl='x', yl='y', color='b', name=None):
         self.redo(self.axes, 0, name, xl, yl)
         intlen = bounds[-1] - bounds[0]
         ws = []
         for weight in weights:
-            ws.append(weight / intlen)
+            ws.append(weight / h)
         self.axes.hist(mids, bins=bounds, weights=ws, color=color)
 
         xticks = list(map(lambda x: round(x, 3), self.axes.get_xticks()))
