@@ -40,8 +40,11 @@ class Lab6Task1(TaskView):
         self.intervals_combobox.currentIndexChanged.connect(self.interval_selected)
         self.alpha.valueChanged.connect(self.alpha_changed)
 
-        self.table.setRowCount(4)
-        self.table.setVerticalHeaderLabels(['xi; xi+1', 'ni', 'ωi', 'ci'])
+        self.table.setRowCount(7)
+        self.table.setVerticalHeaderLabels(['xi; xi+1', 'ni', 'ωi', 'ci',
+                                             "n'i = p_i*n", "(n'i - ni)^2", 
+                                             "(n'i - ni)^2 / n'i"
+                                             ])
         self.prepare_plots()
 
     def prepare_plots(self):
@@ -99,13 +102,24 @@ class Lab6Task1(TaskView):
 
         self.continuous_data = continuous_data
 
+        a = continuous_data.x_v
+        sigma = continuous_data.sigma
+
+        self.a = a
+        self.sigma = sigma
+
         table = self.table
         table.setColumnCount(interval_count)
 
+        Nsum = sum(continuous_data.N)
         for i in range(interval_count):
             N = continuous_data.N[i]
             W = continuous_data.W[i]
             mid = continuous_data.middles[i]
+            pi = normal_theorethical_probability(continuous_data.intervals[i], a, sigma)
+            npi = pi * Nsum
+            n_square = (npi - continuous_data.N[i]) ** 2
+            chi_2 = n_square / npi
             table.setItem(
                 0,
                 i,
@@ -117,18 +131,15 @@ class Lab6Task1(TaskView):
             table.setItem(1, i, QTableWidgetItem(f'{N}\t'))
             table.setItem(2, i, QTableWidgetItem(f'{round(W, 3)}\t'))
             table.setItem(3, i, QTableWidgetItem(f'{round(mid, 3)}\t'))
+            table.setItem(4, i, QTableWidgetItem(f'{round(npi, 3)}\t'))
+            table.setItem(5, i, QTableWidgetItem(f'{round(n_square, 3)}\t'))
+            table.setItem(6, i, QTableWidgetItem(f'{round(chi_2, 3)}\t'))
 
         # Основные харрактеристики
         self.xv_label.setText(str(round(continuous_data.x_v, 5)))
         self.dv_label.setText(str(round(continuous_data.D_v, 5)))
         self.sigma_v_label.setText(str(round(continuous_data.sigma, 5)))
         self.s_label.setText(str(round(continuous_data.S, 5)))
-
-        a = continuous_data.x_v
-        sigma = continuous_data.sigma
-
-        self.a = a
-        self.sigma = sigma
 
 
         # Эмпирическая функция

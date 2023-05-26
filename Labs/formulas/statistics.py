@@ -282,6 +282,6 @@ def normal_chi2(m, a, sigma, data: ContinuousData):
     value = 0
     n = sum(data.N)
     for i in range(m):
-        value += (data.N[i]**2) / (n * normal_theorethical_probability(data.intervals[i], a, sigma))
-    value -= n
+        npi = n * normal_theorethical_probability(data.intervals[i], a, sigma)
+        value += ((data.N[i] - npi)**2) / npi
     return value
