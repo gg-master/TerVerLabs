@@ -285,3 +285,22 @@ def normal_chi2(m, a, sigma, data: ContinuousData):
         npi = n * normal_theorethical_probability(data.intervals[i], a, sigma)
         value += ((data.N[i] - npi)**2) / npi
     return value
+
+def indicative_theorethical_probability(interval, lambda_):
+    return exp(-(lambda_ * interval[0])) - exp(-(lambda_ * interval[1]))
+
+
+def process_indicative_density(lambda_):
+    density = lambda x, lambda_: 0 if x < 0 else lambda_ * exp(-(lambda_ * x))
+    x = [i for i in range(-100, 100)]
+    y = [density(xi, lambda_) for xi in x]
+    return x, y
+
+
+def indicative_chi2(m, lambda_, data: ContinuousData):
+    value = 0
+    n = sum(data.N)
+    for i in range(m):
+        npi = n * indicative_theorethical_probability(data.intervals[i], lambda_)
+        value += ((data.N[i] - npi)**2) / npi
+    return value

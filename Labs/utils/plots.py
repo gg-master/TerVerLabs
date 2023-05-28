@@ -72,7 +72,7 @@ class Histogram(BasicGraph):
     def __init__(self, parent=None, name=None, w=5, h=4, dpi=100):
         BasicGraph.__init__(self, parent, name, w, h, dpi)
         self._gap_x = None
-
+        
     def set_x_gap(self, x):
         self._gap_x = x
 

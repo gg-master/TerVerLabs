@@ -17,22 +17,22 @@ from scipy.stats import chi2
 
 from formulas.statistics import (
     process_continuous_data,
-    process_normal_density,
+    process_indicative_density,
     ContinuousData,
     process_continuous_intervals,
-    normal_theorethical_probability,
-    normal_chi2
+    indicative_theorethical_probability,
+    indicative_chi2
 )
 
 
-class Lab6Task1(TaskView):
+class Lab6Task2(TaskView):
     def __init__(self, task_number: int, parent):
         super().__init__(parent)
         self._task_number: int = task_number
         self.currentFile = None
         self.data = None
 
-        uic.loadUi(resolve_path('ui/lab6_task1.ui'), self)
+        uic.loadUi(resolve_path('ui/lab6_task2.ui'), self)
         self.openFile.clicked.connect(self.file_load_signal)
         self.calculateButton.clicked.connect(self.load_data)
         self.manualInput.stateChanged.connect(self.manual_input_activate)
@@ -102,10 +102,9 @@ class Lab6Task1(TaskView):
 
         self.continuous_data = continuous_data
         
-        self.a = a = continuous_data.x_v
-        self.sigma = sigma = continuous_data.sigma
+        self.lambda_ = lambda_ = 1 / continuous_data.x_v
 
-        table = self.table
+        table: QTableWidget = self.table
         table.setColumnCount(interval_count)
 
         Nsum = sum(continuous_data.N)
@@ -113,7 +112,7 @@ class Lab6Task1(TaskView):
             N = continuous_data.N[i]
             W = continuous_data.W[i]
             mid = continuous_data.middles[i]
-            pi = normal_theorethical_probability(continuous_data.intervals[i], a, sigma)
+            pi = indicative_theorethical_probability(continuous_data.intervals[i], lambda_)
             npi = pi * Nsum
             n_square = (npi - continuous_data.N[i]) ** 2
             chi_2 = n_square / npi
@@ -139,15 +138,14 @@ class Lab6Task1(TaskView):
         self.s_label.setText(str(round(continuous_data.S, 5)))
 
 
-        # Эмпирическая функция
-        if sigma:
-            plot_data = process_normal_density(a, sigma)
-            self.density_graph.display(
-                plot_data, 'x', 'f*(x)', color='k'
-            )
+        # График плотности распределения
+        plot_data = process_indicative_density(lambda_)
+        self.density_graph.display(
+            plot_data, 'x', 'f(x)', color='k'
+        )
 
-        self.a_label.setText(str(round(a, 5)))
-        self.sigma_label.setText(str(round(sigma, 5)))
+        # Точечные оценки
+        self.lambda_label.setText(str(round(lambda_, 5)))
         self.alpha_changed(self.alpha.value())
 
         # Гистограмма частот и относительных частот
@@ -172,12 +170,12 @@ class Lab6Task1(TaskView):
         self.intervals_combobox.addItems(list(map(lambda x: f"[{x[0]}, {x[1]})", continuous_data.intervals)))
     
     def alpha_changed(self, value):
-        k = self.intervalCount.value() - 3
+        k = self.intervalCount.value() - 2
         # k = m - 3 только для нормального распределения, у других распределений другая формула
-        if k > 0 and self.sigma:
+        if k > 0:
             alpha = value
             chi2_crit = round(chi2.ppf(1 - alpha, k), 5)
-            chi2_exp = round(normal_chi2(self.intervalCount.value(), self.a, self.sigma, self.continuous_data), 5)
+            chi2_exp = round(indicative_chi2(self.intervalCount.value(), self.lambda_, self.continuous_data), 5)
         
             self.k_label.setText(str(k))
             self.chi2_label.setText(str(chi2_crit))
@@ -192,9 +190,8 @@ class Lab6Task1(TaskView):
 
     def interval_selected(self, index):
         interval = self.continuous_data.intervals[index]
-        if self.sigma:
-            self.prob_label.setText(str(
-                round(normal_theorethical_probability(interval, self.a, self.sigma), 5)))
+        self.prob_label.setText(str(
+            round(indicative_theorethical_probability(interval, self.lambda_), 5)))
     
     def file_load_signal(self):
         self.file_input_activate()
@@ -236,4 +233,4 @@ class Lab6Task1(TaskView):
         self.table.setColumnCount(self.intervalCount.value())
 
     def task_name(self):
-        return f"{self._task_number}. Проверка гипотезы о нормальном распределении"
+        return f"{self._task_number}. Проверка гипотезы о показательном распределении"
