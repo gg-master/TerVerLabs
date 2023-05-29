@@ -86,10 +86,12 @@ class Lab6Task1(TaskView):
 
         return process_continuous_intervals(data)
 
-    def load_data(self):
+    def load_data(self): 
         interval_count = self.intervalCount.value()
 
         if not self.manualInput.isChecked():
+            if self.data is None:
+                return
             continuous_data = process_continuous_data(
                 self.data, interval_count
             )

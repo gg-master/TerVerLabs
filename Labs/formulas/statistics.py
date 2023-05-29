@@ -292,7 +292,7 @@ def indicative_theorethical_probability(interval, lambda_):
 
 def process_indicative_density(lambda_):
     density = lambda x, lambda_: 0 if x < 0 else lambda_ * exp(-(lambda_ * x))
-    x = [i for i in range(-100, 100)]
+    x = [i for i in range(1, 100)]
     y = [density(xi, lambda_) for xi in x]
     return x, y
 

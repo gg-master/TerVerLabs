@@ -90,6 +90,8 @@ class Lab6Task2(TaskView):
         interval_count = self.intervalCount.value()
 
         if not self.manualInput.isChecked():
+            if self.data is None:
+                return
             continuous_data = process_continuous_data(
                 self.data, interval_count
             )
