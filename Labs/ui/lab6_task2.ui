@@ -777,6 +777,11 @@
            </item>
           </layout>
          </widget>
+         <widget class="QWidget" name="continuous_rel_histpolygon">
+          <attribute name="title">
+           <string>Графики</string>
+          </attribute>
+         </widget>
          <widget class="QWidget" name="continuous_function">
           <attribute name="title">
            <string>Функция распределения</string>
@@ -817,11 +822,6 @@
             </layout>
            </item>
           </layout>
-         </widget>
-         <widget class="QWidget" name="continuous_rel_histpolygon">
-          <attribute name="title">
-           <string>Гистограмма относительных частот</string>
-          </attribute>
          </widget>
          <widget class="QWidget" name="probabilites">
           <attribute name="title">
@@ -945,6 +945,13 @@
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="viewTable">
+               <property name="text">
+                <string>Посмотреть таблицу</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -1128,6 +1135,16 @@
                 </widget>
                </item>
               </layout>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="pixmap">
+                <pixmap>../images/lab6_chi2.jpg</pixmap>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QLabel" name="label_32">

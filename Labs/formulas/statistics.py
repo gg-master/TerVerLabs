@@ -273,7 +273,7 @@ def normal_theorethical_probability(interval, a, sigma):
 
 def process_normal_density(a, sigma):
     density = lambda x, a, sigma: (1 / (sqrt(2 * pi) * sigma)) * exp(-(((x - a)**2) / (2 * sigma**2)))
-    x = [i for i in range(-100, 100)]
+    x = [i for i in range(int(a)-50, int(a)+50)]
     y = [density(xi, a, sigma) for xi in x]
     return x, y
 

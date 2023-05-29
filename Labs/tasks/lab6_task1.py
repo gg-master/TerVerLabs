@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (
 )
 
 from utils.plots import *
+from utils.chi_table import ChiTable
 from traceback import print_exc
 from scipy.stats import chi2
 
@@ -31,9 +32,11 @@ class Lab6Task1(TaskView):
         self._task_number: int = task_number
         self.currentFile = None
         self.data = None
+        self.chi_table = ChiTable() 
 
         uic.loadUi(resolve_path('ui/lab6_task1.ui'), self)
         self.openFile.clicked.connect(self.file_load_signal)
+        self.viewTable.clicked.connect(self.chi_table.show)
         self.calculateButton.clicked.connect(self.load_data)
         self.manualInput.stateChanged.connect(self.manual_input_activate)
 
@@ -49,8 +52,8 @@ class Lab6Task1(TaskView):
 
     def prepare_plots(self):
         lt = QVBoxLayout()
-        self.histpolygon = PolygonHistogram(
-            self, name='Гистограмма относительных частот'
+        self.histpolygon = PolygonHistogramContinuous(
+            self, name='Графики'
         )
         lt.addWidget(self.histpolygon, alignment=Qt.Alignment())
         self.continuous_rel_histpolygon.setLayout(lt)
@@ -162,10 +165,11 @@ class Lab6Task1(TaskView):
             self.histpolygon.set_x_gap(round(Xmin - (Xmin / 4), 2))
 
         self.histpolygon.display(
+            plot_data,
             bounds,
             continuous_data.h,
             continuous_data.middles,
-            continuous_data.N,
+            continuous_data.W,
             'xi*',
             'ni/nh',
         )
@@ -190,7 +194,7 @@ class Lab6Task1(TaskView):
                 self.checkResult_label.setText("ГИПОТЕЗА ОТВЕРГНУТА")
             else:
                 self.checkResult_label.setStyleSheet("color: green; font-size: 24px")
-                self.checkResult_label.setText("ГИПОТЕЗА ПОДТВЕРЖДЕНА")
+                self.checkResult_label.setText("ГИПОТЕЗА НЕ ОТВЕРГНУТА")
 
     def interval_selected(self, index):
         interval = self.continuous_data.intervals[index]
