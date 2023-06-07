@@ -19,9 +19,9 @@ class DiscreteData:
 @dataclass
 class ContinuousData:
     intervals: List[List[float]]
-    N: list[int]
-    W: list[float]
-    middles: list[float]
+    N: List[int]
+    W: List[float]
+    middles: List[float]
     x_v: float
     sigma: float
     D_v: float

@@ -1,5 +1,6 @@
 import sys
 from PyQt5 import uic
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox
 from utils.paths import resolve_path
 from widgets import TaskView
@@ -10,6 +11,7 @@ class LabsWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self._last_lab_num = None
+        self.setWindowIcon(QIcon(resolve_path("logo.jpg")))
         uic.loadUi(resolve_path('ui/window.ui'), self)
         self.labSelect.currentIndexChanged.connect(self.on_lab_selected)
         self.taskSelect.currentIndexChanged.connect(self.on_task_selected)
